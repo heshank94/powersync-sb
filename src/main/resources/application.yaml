@@ -1,0 +1,27 @@
+
+spring:
+  application:
+    name: powersync-java
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/springboot_demo
+    username: postgres
+    password: 123
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  liquibase:
+    change-log: classpath:db/changelog/master.xml
+    default-schema: public
+    enabled: true
+
+powersync:
+  instance-url: "http://localhost:8080"
+  private-key-pem: classpath:keys/powersync_private_key.pem
+  public-key-pem: classpath:keys/powersync_public_key.pem
+  jwks-kid: powersync-0e0tqm3s0h
+  issuer: "springboot-app"
+
+server:
+  port: 6061
