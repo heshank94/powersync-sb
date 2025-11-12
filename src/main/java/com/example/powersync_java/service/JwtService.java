@@ -46,7 +46,7 @@ public class JwtService {
 
             SignedJWT signedJWT = new SignedJWT(
                     new JWSHeader.Builder(JWSAlgorithm.RS256)
-                            .keyID(rsaKey.getKeyID())
+                            .keyID("powersync-0e0tqm3s0h")
                             .build(),
                     claims
             );

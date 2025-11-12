@@ -5,6 +5,7 @@ import com.example.powersync_java.repo.ListsRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 /**
@@ -29,7 +30,7 @@ public class ListService {
         });
 
         if (data.containsKey("created_at"))
-            list.setCreatedAt(parseDate(data.get("created_at")));
+            list.setCreatedAt(parseDate((String) data.get("created_at")));
 
         if (data.containsKey("name"))
             list.setName((String) data.get("name"));
@@ -45,7 +46,7 @@ public class ListService {
         Lists list = repo.findById(id).orElseThrow();
 
         if (data.containsKey("created_at"))
-            list.setCreatedAt(parseDate(data.get("created_at")));
+            list.setCreatedAt(parseDate((String) data.get("created_at")));
 
         if (data.containsKey("name"))
             list.setName((String) data.get("name"));
@@ -60,8 +61,8 @@ public class ListService {
         repo.deleteById((String) data.get("id"));
     }
 
-    private LocalDateTime parseDate(Object obj) {
-        if (obj == null) return null;
-        return LocalDateTime.parse(obj.toString());
+    private LocalDateTime parseDate(String value) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return LocalDateTime.parse(value, formatter);
     }
 }
