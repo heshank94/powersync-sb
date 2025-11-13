@@ -1,6 +1,8 @@
 server:
   port: 6061
-
+realm:
+  name: master
+  port: 8080
 spring:
   application:
     name: powersync-java
@@ -16,11 +18,11 @@ spring:
       client:
         provider:
           keycloak:
-            authorization-uri: http://localhost:8080/realms/library-system/protocol/openid-connect/auth
-            issuer-uri: http://localhost:8080/realms/library-system
-            jwk-set-uri: http://localhost:8080/realms/library-system/protocol/openid-connect/certs
-            token-uri: http://localhost:8080/realms/library-system/protocol/openid-connect/token
-            user-info-uri: http://localhost:8080/realms/library-system/protocol/openid-connect/userinfo
+            authorization-uri: http://localhost:${realm.port}/realms/${realm.name}/protocol/openid-connect/auth
+            issuer-uri: http://localhost:${realm.port}/realms/${realm.name}
+            jwk-set-uri: http://localhost:${realm.port}/realms/${realm.name}/protocol/openid-connect/certs
+            token-uri: http://localhost:${realm.port}/realms/${realm.name}/protocol/openid-connect/token
+            user-info-uri: http://localhost:${realm.port}/realms/${realm.name}/protocol/openid-connect/userinfo
             user-name-attribute: preferred_username
         registration:
           keycloak:
@@ -32,12 +34,4 @@ spring:
             scope: openid,profile,email
       resourceserver:
         jwt:
-          jwk-set-uri: http://localhost:8080/realms/library-system/protocol/openid-connect/certs
-
-
-powersync:
-  instance-url: "http://localhost:8180"
-  private-key: eyJrdHkiOiJSU0EiLCJuIjoialRRLWhZbTVkcEhpaWl5d2VnUlQ4aHlyeHBzdmpxUEk0UDRJb3pqSGljZjZEUGppbHcxQnMzejh2UHBZaGYwODdtVFJBU0xmcE1vbGNyNHNpajZQT2k4SVB0dnBKUUVnT05oXzdad2dETDN3aUY3d203SzJMbWpPcW11TkUzUm1vVnRqcWQzVUJnZktPTTFpWDU1SUZaX2c3Y1Y5SzVhSjFKY1dpa2JaNnM4Njl3bjQyYlJHRlZUazE1NU1lQnY2Q2g5dU0xTEgxYzZwWjZjQll3TVNmc3FRQ0E1NGtic05oUHhfcmJkVGxIQWpkSzRfWFZndEVrX25sOXJyejhVdGhBQ2Vla3N2RDhNNXpWOHp4T2szTm5Sb1FzRjZzWHBzMm1hejVTUE9JNmxDYzctbmlaRjltak9zS2JranAyb1A1YUltM0luci1xYXFyRXJpTV9qN2xRIiwiZSI6IkFRQUIiLCJkIjoiSERYN1pjZVoxN0FXMEI5VWxOUW5oMkFtQzVSMm9HdGxsMW41bE02and3bkNrZlBwcFY4ZktNS0laaU1vSzREb093TEdaUkU0R0Y3UXM0ZC1NNUtESUE5RWVQYUxzbnB5bXhqYUdqbE9oLTBzMExvVEhUQkx5S0xrNDFTQWg0b0NkU3Rpa280QXJjSEJxNjZSQUdTSnAxUmRablBGNmI3MlE1UjZDdDlUNjE3MndaRTVRU2ZLcm12OUhkS3pYenJVUUYtREpGb3hkTGRFTUd6X0xIOTRfbGV2Q0RsWEctX1pONWVQSkxDN2dWa2dyQ2xBMUR3X1VlTGdQLUtReUt2WWFmV19sVHFjZkJBRGpkTE56bEVkLTFZMWQ4QkJ5LWEwQWlHMllGWkNkOFRlQmVGckw1RmRXcnA2eXJhTFNzWU9XWUlmc1pUZHZndGpMXzJuREhidmt3IiwicCI6IndEcFNJV0V0cEdOV25WMC16UmFXWWZkYVE1QUJhSHRqcGRBaVJ1WktHMTVmcFRTZGhkM1JuMkFzeUVJZjBUOVpKa0JGNUZjMEtQamlEc0Y2Rk8tMlQ4RllvV2IwdlFmSDR2RlNnVEp0aEtCZGoxeHNYcjBoMUdDNW44Mk92LWhnTmpJN3kyVHBPM29VYVJXTXhMNmMxN3FSaElQamlzcXFLWUd2TUhrUXdPOCIsInEiOiJ2QXlKelFyWERRZWxXUDFfXzVvdHY2bGFJLXl5MU9QU3EwMXUtYXNucUVtX0Z2bTNVOTZHaTJudzFSckpnanVwQlMwWXhVY2hCZ1hHbS1qRkwyR09Ydk95ek1FRmNzcFEyS2dZQVhOOFNjQkVyaVFYZ3J3T2lSeGtBNEJsYV9ZNDVIa2hpSUJZQ2d5bTRjUXJ5TG9HOW9Dc0xIU1VEYW9WaHJPeXJTNmF3N3MiLCJkcCI6Ik43d3hPQkJ2Sld6UUhreDgtd1lEa0dBaHdka3RMMWduYWxwUXRmSHJwc2ZVUDVoajJfNlcydmtOd3ZxNU12aUZKcndZQjc3cEZzQWktMWhKeDJ4QmxocGZVbDBCdFJWZWRZUzNBVkxYd2s2bEVmNGdSY19jMFRGQ1lQMC0ySkhONDZqcEFXNC0yY25weFJaRWZIOHdCclRIb0g2RktTYmQ4Njd3VnNPamdlMCIsImRxIjoiQllqMDhXVVZTVnZsUVFaTkl5X2RrdHVnUEpoMTl4QXhuanNzUGdzTW9zWnc2bk0xTXpIRWtndnZPOGFMRWR0QnNWWlBlVmNMb01yQXVzd1NLYl9jV2UwZ1lTaDVTWlNzNW9Pa0dUN1Y5TEhGRTc4YU5nM2stNklyUzNNWENTTjVMemhsaFVnSnoxbnAtNUV6bkxmbEJwSm9fdkg3Zlo5NF9Mc0RVbGVoMUlzIiwicWkiOiJreHRmRzV5YnRMZW1JTjAzaWNsNEFEd0NKaGYwSlFYeWdfd1hyamtXZHBsMUNJUGFwN2lxWTNDaUhGcXhYYS1MYzlUTng0cFlaNk1VaUZ5N2FXdFZDUHB3LWZJT0dvamZDMWFXM0tHd1B6NnFVT3l6NFUtSllYcTlIWHJ1U2xNZFo2Y0E4MnlKME4wM3YxaVlHWEdoeVVwbWJ4SFExZFRETDlWLW5DcDBLV3MiLCJhbGciOiJSUzI1NiIsImtpZCI6InBvd2Vyc3luYy1lZjVmMWU4NWNiIn0=
-  public-key: eyJrdHkiOiJSU0EiLCJuIjoialRRLWhZbTVkcEhpaWl5d2VnUlQ4aHlyeHBzdmpxUEk0UDRJb3pqSGljZjZEUGppbHcxQnMzejh2UHBZaGYwODdtVFJBU0xmcE1vbGNyNHNpajZQT2k4SVB0dnBKUUVnT05oXzdad2dETDN3aUY3d203SzJMbWpPcW11TkUzUm1vVnRqcWQzVUJnZktPTTFpWDU1SUZaX2c3Y1Y5SzVhSjFKY1dpa2JaNnM4Njl3bjQyYlJHRlZUazE1NU1lQnY2Q2g5dU0xTEgxYzZwWjZjQll3TVNmc3FRQ0E1NGtic05oUHhfcmJkVGxIQWpkSzRfWFZndEVrX25sOXJyejhVdGhBQ2Vla3N2RDhNNXpWOHp4T2szTm5Sb1FzRjZzWHBzMm1hejVTUE9JNmxDYzctbmlaRjltak9zS2JranAyb1A1YUltM0luci1xYXFyRXJpTV9qN2xRIiwiZSI6IkFRQUIiLCJhbGciOiJSUzI1NiIsImtpZCI6InBvd2Vyc3luYy1lZjVmMWU4NWNiIn0=
-  jwks-kid: powersync-0e0tqm3s0h
-  issuer: "springboot-app"
+          jwk-set-uri: http://localhost:${realm.port}/realms/${realm.name}/protocol/openid-connect/certs
