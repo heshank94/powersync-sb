@@ -3,50 +3,35 @@ package com.example.powersync_java.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
-import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/upload_data/").permitAll()
-                        .requestMatchers("/api/auth/").permitAll()
-                        .requestMatchers("/api/nonauth/").authenticated()
+                        .requestMatchers("/api/hello/").permitAll()
                         .requestMatchers("/api/profile/").authenticated()
+                        .requestMatchers("/api/auth/").authenticated()
+                        .requestMatchers("/api/nonauth/").authenticated()
                         .anyRequest().permitAll()
                 )
-                .formLogin(form -> form.disable())
-                .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(userInfo -> userInfo.oidcUserService(oidcUserService()))
-                        .defaultSuccessUrl("http://localhost:8081", true)
-                )
-                .oauth2Client(withDefaults())
-                .logout(logout -> logout
-                        .logoutSuccessUrl("http://localhost:8081")
+                .formLogin(AbstractHttpConfigurer::disable)
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
                 );
 
         return http.build();
@@ -57,46 +42,16 @@ public class SecurityConfig {
         return NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
     }
 
-    @Bean
-    public OAuth2UserService<OidcUserRequest, OidcUser> oidcUserService() {
-        OidcUserService delegate = new OidcUserService();
-
-        return request -> {
-            OidcUser oidcUser = delegate.loadUser(request);
-
-            List<String> roles = oidcUser.getClaimAsStringList("frappe_roles");
-            if (roles == null) roles = List.of();
-
-            List<GrantedAuthority> mappedAuthorities = roles.stream()
-                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-                    .collect(Collectors.toList());
-
-            return new DefaultOidcUser(
-                    mappedAuthorities,
-                    oidcUser.getIdToken(),
-                    oidcUser.getUserInfo()
-            );
-        };
-    }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter converter = new JwtGrantedAuthoritiesConverter();
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+        converter.setAuthoritiesClaimName("frappe_roles");
+        converter.setAuthorityPrefix("ROLE_");
 
-    private static <T> Customizer<T> withDefaults() {
-        return Customizer.withDefaults();
+        JwtAuthenticationConverter jwtConverter = new JwtAuthenticationConverter();
+        jwtConverter.setJwtGrantedAuthoritiesConverter(converter);
+        return jwtConverter;
     }
-
-//    @Bean
-//    public JwtDecoder jwtDecoder() {
-//        // Replace with your PowerSync JWKS endpoint
-//        String jwksUri = "http://localhost:6061/api/get_keys/";
-//        return NimbusJwtDecoder.withJwkSetUri(jwksUri).build();
-//    }
 }
