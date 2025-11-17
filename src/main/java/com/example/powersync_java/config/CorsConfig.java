@@ -19,8 +19,7 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOriginPatterns(List.of(
-                "http://localhost:8081",
-                "http://192.168.8.133:8081"
+                "http://localhost:8081" //Mobile App
         ));
         config.setAllowedMethods(List.of("*"));
         config.setAllowedHeaders(List.of("*"));

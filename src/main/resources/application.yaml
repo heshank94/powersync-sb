@@ -7,7 +7,7 @@ spring:
   application:
     name: powersync-java
   datasource:
-    url: jdbc:postgresql://pg-db:5432/django_demo
+    url: jdbc:postgresql://localhost:5432/springboot_demo
     username: postgres
     password: 123
   jpa:
